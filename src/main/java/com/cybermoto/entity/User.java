@@ -24,8 +24,8 @@ public class User {
     @NotBlank(message = "A senha é obrigatória")
     private String password;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false, name = "TYPEUSER")
+    @Enumerated(EnumType.STRING)
     private TypeUser type;
 
     public void setType(TypeUser type) {this.type = type;}

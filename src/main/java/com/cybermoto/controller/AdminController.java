@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -34,25 +36,16 @@ public class AdminController {
         return "login";
     }
 
-    @PostMapping("logar")
-    public String logar(@RequestParam String email,
-                        @RequestParam String password,
-                        Model model ) {
-        User usuario = userService.loginUser(email, password);
-
-        if (usuario != null) {
-            model.addAttribute("Usuario", usuario);
-            return "home";
-        }
-        else {
-            model.addAttribute("erro", "E-mail ou senha incorretos");
-            return "login";
-        }
-
-    }
 
     @GetMapping("/home")
     public String home() {
         return "home";
     }
+
+@GetMapping ("/manage-users")
+public String manageUsers(Model model ) {
+        List<User> users = userRepository.findAll();
+        model.addAttribute("usuarios", users);
+        return "manage-users";
+}
 }

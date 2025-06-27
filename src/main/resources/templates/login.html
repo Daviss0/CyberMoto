@@ -8,12 +8,13 @@
 <p th:if="${param.error}" style="color: red;">
 Email ou senha inválidos.
 </p>
+
 <h1>Login</h1>
 
 <form th:action="@{/admin/login}" method="post">
 
     <label>E-mail:</label>
-    <input type="email" name="username" placeholder="Email" required />
+    <input type="text" name="username" placeholder="Email" required />
     <br/>
 
     <label>Senha:</label>

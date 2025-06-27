@@ -14,13 +14,7 @@ public class UserServiceImpl implements UserService{
 private UserRepository userRepository;
 
 
-    @Override
-  public User loginUser(String email, String password) {
-      return userRepository.findByEmail(email)
-              .filter(user -> new BCryptPasswordEncoder()
-                      .matches(password, user.getPassword()))
-              .orElse(null);
-  }
+
 
   @Override
     public void saveUser(User user) {
