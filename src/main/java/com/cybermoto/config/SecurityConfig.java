@@ -3,6 +3,7 @@ package com.cybermoto.config;
 import com.cybermoto.entity.User;
 import com.cybermoto.enums.TypeUser;
 import com.cybermoto.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -22,6 +23,9 @@ import java.util.List;
 @Configuration
 public class SecurityConfig {
 
+    @Autowired
+    private CustomAuthenticationSuccessHandler successHandler;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -36,7 +40,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/admin/login")
                         .usernameParameter("username")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/admin/home", true)
+                        .successHandler(successHandler)
                         .permitAll()
                 )
                 .csrf(csrf -> csrf.disable())

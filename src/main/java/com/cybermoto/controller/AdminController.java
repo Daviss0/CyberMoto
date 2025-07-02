@@ -3,13 +3,12 @@ package com.cybermoto.controller;
 import com.cybermoto.entity.User;
 import com.cybermoto.repository.UserRepository;
 import com.cybermoto.service.UserService;
+import com.sun.tools.javac.Main;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.model.IModel;
 
 import java.security.Principal;
 import java.util.List;
@@ -36,16 +35,34 @@ public class AdminController {
         return "login";
     }
 
-
-    @GetMapping("/home")
-    public String home() {
-        return "home";
-    }
-
-@GetMapping ("/manage-users")
-public String manageUsers(Model model ) {
+    @GetMapping ("/manage-users")
+    public String manageUsers(Model model, Principal principal ) {
+        User user = userRepository.findByEmail(principal.getName()).orElse(null);
+        model.addAttribute("userLogado", user);
         List<User> users = userRepository.findAll();
         model.addAttribute("usuarios", users);
         return "manage-users";
 }
+
+    @GetMapping("/add-users")
+    public String addUsers(Model model, Principal principal) {
+        User user = userRepository.findByEmail(principal.getName()).orElse(null);
+        model.addAttribute("userLogado", user);
+        model.addAttribute("user", new User());
+        return "add-users";
+    }
+
+    @PostMapping("/user-added")
+    public String addUser (@ModelAttribute ("user") User user, Model model) {
+        try {
+            userService.saveUser(user);
+            return "redirect:/admin/manage-users"; // redireciona para o metodo manageUsers que carrega a lista de usuarios
+
+        } catch (Exception e) {
+
+            model.addAttribute("user", user); // reenvia os dados preenchidos
+            model.addAttribute("erro", e.getMessage()); // passa a mensagem de erro para a view
+            return "add-users"; //redireciona para a mesma pagina
+        }
+    }
 }

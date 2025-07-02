@@ -39,9 +39,7 @@
                 </li>
             </ul>
 
-            <span class="navbar-text">
-              Bem-vindo, <span th:text="${#authentication.name}">Usuário</span>
-          </span>
+            <span th:text="'Bem-vindo ' + ${userLogado.name}">Usuário</span></span>
         </div>
     </div>
 </nav>
@@ -63,7 +61,7 @@
     </tbody>
 </table>
 
-<a class="btn btn-success" href="add-user">Novo Usuário</a>
+<a class="btn btn-success" href="add-users">Novo Usuário</a>
 <a class="btn btn-secondary" href="home">Voltar</a>
 </body>
 </html>
