@@ -52,6 +52,33 @@ public class AdminController {
         return "add-users";
     }
 
+    @GetMapping("edit-user/{id}")
+    public String editUser(@PathVariable Long id, Model model) {
+        User user = userRepository.findById(id).orElse(null);
+        model.addAttribute("userData", user);
+        return "edit-user";
+    }
+
+    @PostMapping("/update-user")
+    public String updateUser(@ModelAttribute("userData") User user, Model model) {
+
+        System.out.println(">>> Recebido para edição: ID = " + user.getId());
+
+        try {
+        userService.saveUser(user);
+            System.out.println(">>> Usuário salvo com sucesso. Redirecionando para manage-users.");
+            return "redirect:/admin/manage-users";
+        }
+        catch (Exception e) {
+            System.out.println(">>> Erro ao salvar usuário:");
+            e.printStackTrace(); // mostra o erro no console
+
+            model.addAttribute("userData", user);
+            model.addAttribute("erro", e.getMessage());
+            return "edit-user";
+        }
+    }
+
     @PostMapping("/user-added")
     public String addUser (@ModelAttribute ("user") User user, Model model) {
         try {
@@ -64,5 +91,11 @@ public class AdminController {
             model.addAttribute("erro", e.getMessage()); // passa a mensagem de erro para a view
             return "add-users"; //redireciona para a mesma pagina
         }
+
     }
+        @PostMapping("/toggle-status/{id}")
+        public String toggleUserStatus(@PathVariable Long id){
+        userService.toggleUserStatus(id);
+          return "redirect:/admin/manage-users";
+        }
 }

@@ -18,7 +18,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column (name = "USERID")
-    private Long userId;
+    private Long id;
 
     @Column(nullable = false, name= "NAME")
     private String name;
@@ -42,13 +42,13 @@ public class User {
     private TypeUser type;
 
     @Column(nullable = false, name = "STATUS")
-    private StatusUser status = StatusUser.valueOf("ATIVO");
+    private StatusUser status = StatusUser.ATIVO;
 
 
     //getters & setters
-    public void setId(Long id) {this.userId = id;}
+    public void setId(Long id) {this.id = id;}
 
-    public Long getId() {return userId;}
+    public Long getId() {return id;}
 
     public String getName() {return name;}
 

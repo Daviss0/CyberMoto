@@ -32,36 +32,55 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin/home">Início</a>
+                    <a class="nav-link" th:href="@{/home}">Início</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{manage-users}">Administrar Usuários</a>
                 </li>
             </ul>
-
-            <span th:text="'Bem-vindo ' + ${userLogado.name}">Usuário</span></span>
+            <span th:text="'Bem-vindo ' + ${userLogado.name}">Usuário</span>
         </div>
     </div>
 </nav>
 <h1>Usuários Cadastrados no Sistema</h1>
+<div class="table-responsive justify-content-center align-items-center" style="margin: 25px;">
 <table>
     <thead>
     <tr>
         <th>ID</th>
+        <th>Nome</th>
+        <th>CPF</th>
         <th>Email</th>
         <th>Tipo de Usuário</th>
+        <th>Status</th>
+        <th>Editar</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="user : ${usuarios}">
         <td th:text="${user.id} ?: '-'"></td>
+        <td th:text="${user.name}"></td>
+        <td th:text="${user.cpf}"></td>
         <td th:text="${user.email} ?: '-'"></td>
         <td th:text="${user.type} ?: '-'"></td>
+        <td>
+            <form th:action="@{'/admin/toggle-status/' + ${user.id}}" method="post" style="display:inline">
+                <button type="submit"
+                        th:classappend="${user.status?.name() == 'ATIVO'} ? 'btn btn-warning' : 'btn btn-success'"
+                <span th:text="${user.status?.name() == 'ATIVO'} ? 'Desativar' : 'Ativar'"></span>
+                </button>
+            </form>
+        </td>
+
+        <td>
+           <a class="btn btn-success" th:href="@{'/admin/edit-user/' + ${user.id}}">Editar Usuário</a>
+        </td>
     </tr>
     </tbody>
 </table>
+<a class="btn btn-success" th:href="@{/admin/add-users}">+ Novo Usuário</a>
+<a class="btn btn-secondary" href="/home">Voltar</a>
+</div>
 
-<a class="btn btn-success" href="add-users">Novo Usuário</a>
-<a class="btn btn-secondary" href="home">Voltar</a>
 </body>
 </html>

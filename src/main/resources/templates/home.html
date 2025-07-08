@@ -23,7 +23,7 @@
 <p>Você está logado com sucesso.</p>
 <span class="d-flex justify-content-center" th:text="'Bem-vindo, ' +  ${userLogado.name}">Usuário</span>
 <div class="d-flex justify-content-center" sec:authorize="hasRole('ADMIN')">
-   <a class="btn btn-success" th:href="@{manage-users}">Gereneciar Usuários</a>
+   <a class="btn btn-success" th:href="@{/admin/manage-users}">Gereneciar Usuários</a>
 </div>
 <div class="d-flex justify-content-center" sec:authorize="hasAnyRole('ADMIN', 'ESTOQUISTA')">
     <a class="btn btn-success" th:href="@{add-products}">Gerenciar Produtos</a>

@@ -18,14 +18,14 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/admin/home">Início</a>
+                    <a class="nav-link" th:href="@{/home}">Início</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{manage-users}">Administrar Usuários</a>
                 </li>
             </ul>
 
-            <span th:text="'Bem-vindo ' + ${userLogado.name}">Usuário</span>
+            <span th:if="${userLogado.name != null}" th:text="'Bem-vindo' + ${userLogado.name} ">Usuário</span>
         </div>
     </div>
 </nav>
