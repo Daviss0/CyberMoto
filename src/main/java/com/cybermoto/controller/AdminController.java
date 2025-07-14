@@ -62,17 +62,11 @@ public class AdminController {
     @PostMapping("/update-user")
     public String updateUser(@ModelAttribute("userData") User user, Model model) {
 
-        System.out.println(">>> Recebido para edição: ID = " + user.getId());
-
         try {
         userService.saveUser(user);
-            System.out.println(">>> Usuário salvo com sucesso. Redirecionando para manage-users.");
             return "redirect:/admin/manage-users";
         }
         catch (Exception e) {
-            System.out.println(">>> Erro ao salvar usuário:");
-            e.printStackTrace(); // mostra o erro no console
-
             model.addAttribute("userData", user);
             model.addAttribute("erro", e.getMessage());
             return "edit-user";
