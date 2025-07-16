@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @Entity
@@ -50,7 +52,15 @@ public class Product {
     @Min(value = 0, message = "A quantidade no estoque não pode ser negativa")
     private int quantity;
 
+    @OneToMany (mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ImageProduct> images = new ArrayList<>();
+
+
     // getters e setters
+    public void setImages(List<ImageProduct> images) {this.images = images;}
+
+    public List<ImageProduct> getImages() {return images;}
+
     public int getQuantity() {return quantity;}
 
     public void setQuantity(int quantity) {this.quantity = quantity;}
