@@ -1,11 +1,13 @@
 package com.cybermoto.service;
 
 import com.cybermoto.entity.Product;
+import com.cybermoto.enums.StatusProduct;
 import com.cybermoto.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService{
@@ -50,6 +52,19 @@ public class ProductServiceImpl implements ProductService{
             throw new IllegalArgumentException ("Quantidade é obrigatoria");
         }
         productRepository.save(product);
+    }
+
+    public void toggleProductStatus(Long productId) {
+      Product product = productRepository.findById(productId)
+              .orElseThrow(() -> new IllegalArgumentException ("produto nao encontrado"));
+
+      if(product.getStatus() == StatusProduct.ATIVO) {
+          product.setStatus(StatusProduct.INATIVO);
+      }
+      else {
+          product.setStatus(StatusProduct.ATIVO);
+      }
+          productRepository.save(product);
     }
 
 }

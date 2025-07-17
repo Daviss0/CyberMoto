@@ -69,7 +69,7 @@
         <td>
             <form th:action="@{'/admin/toggle-status/' + ${user.id}}" method="post" style="display:inline">
                 <button type="submit"
-                        th:classappend="${user.status?.name() == 'ATIVO'} ? 'btn btn-warning' : 'btn btn-success'"
+                        th:classappend="${user.status?.name() == 'ATIVO'} ? 'btn btn-warning' : 'btn btn-success'">
                 <span th:text="${user.status?.name() == 'ATIVO'} ? 'Desativar' : 'Ativar'"></span>
                 </button>
             </form>

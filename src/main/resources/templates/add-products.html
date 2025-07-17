@@ -32,12 +32,17 @@
 
 <div class="container d-flex justify-content-center align-items-center"
      style="min-height: 80vh; border-top: 30px solid #ffffff; border-bottom: 30px solid #ffffff" >
-  <form class="w-50 border p-4 rounder-shadow" th:action="@{/product/product-added}" th:object="${productForm}"
-        method="post" enctype="multipart/form-data">
+  <form class="w-50 border p-4 rounder-shadow"
+        th:action="@{/product/product-added}"
+        th:object="${productForm}"
+        method="post"
+        enctype="multipart/form-data">
 
     <h1>Adicionar Produto</h1>
+
     <div th:if="${erro}" class="alert alert-danger text-center mb-3" th:text="${erro}"></div>
 
+    <!-- Campos do Produto -->
     <div class="mb-3">
       <label for="productName" class="form-label">Nome do Produto:</label>
       <input type="text" th:field="*{productName}" class="form-control" id="productName" required>
@@ -51,39 +56,41 @@
     <div class="mb-3">
       <label for="rating" class="form-label">Avaliação:</label>
       <input type="number" th:field="*{rating}" class="form-control" id="rating"
-      min="0.5" max="5.0" step="0.5" required>
+             min="0.5" max="5.0" step="0.5" required>
     </div>
 
     <div class="mb-3">
       <label for="description" class="form-label">Descrição:</label>
       <textarea th:field="*{description}" id="description" class="form-control"
-      rows="5" cols="50" required></textarea>
+                rows="5" cols="50" required></textarea>
     </div>
 
     <div class="mb-3">
       <label for="price" class="form-label">Valor:</label>
       <div class="input-group">
         <span class="input-group-text">R$</span>
-         <input type="number" th:field="*{price}" class="form-control" id="price"
-              step="0.01" min="0.01" required >
+        <input type="number" th:field="*{price}" class="form-control" id="price"
+               step="0.01" min="0.01" required>
       </div>
     </div>
 
     <div class="mb-3">
       <label for="quantity" class="form-label">Quantidade em Estoque:</label>
       <input type="number" th:field="*{quantity}" class="form-control" id="quantity"
-      min="0" required>
+             min="0" required>
     </div>
 
     <div class="mb-3">
-      <label for="images" class="form-label">Imagem do Produto: </label>
-      <input type="file" class="form-control" id="images" multiple accept = "image/*">
+      <label for="images" class="form-label">Imagem do Produto:</label>
+      <input type="file" class="form-control" name="uploadImages" id="images" multiple accept="image/*">
     </div>
 
     <div id="preview" class="mb-3"></div>
 
     <button type="submit" class="btn btn-primary w-50">Salvar</button>
+
   </form>
+
 </div>
 
 <script>

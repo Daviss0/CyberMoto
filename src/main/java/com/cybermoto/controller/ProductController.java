@@ -36,7 +36,7 @@ public class ProductController {
 
     @GetMapping("/manage-products")
     public String showManageProducts(Model model, Principal principal) {
-        List<Product> products = productRepository.findAll();
+        List<Product> products = productRepository.findAllWithImages();
         model.addAttribute("products", products);
 
         String email = principal.getName();
@@ -64,7 +64,7 @@ public class ProductController {
 
     @PostMapping("/product-added")
     public String addProduct(@ModelAttribute ("productForm") Product product,
-                             @RequestParam("images") MultipartFile[] images,
+                             @RequestParam(value = "uploadImages", required = false) MultipartFile[] images,
                              RedirectAttributes redirectAttributes) {
         try {
             productService.saveProduct(product);
@@ -80,6 +80,12 @@ public class ProductController {
            redirectAttributes.addFlashAttribute("erro", e.getMessage());
            return "redirect:/product/add-products";
         }
+    }
+
+    @PostMapping("/toggle-status/{id}")
+    public String toggleProductStatus(@PathVariable Long id) {
+        productService.toggleProductStatus(id);
+        return "redirect:/product/manage-products";
     }
 
 }

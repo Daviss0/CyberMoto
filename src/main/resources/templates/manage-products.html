@@ -60,18 +60,34 @@
         <th>Avaliação</th>
         <th>Valor</th>
         <th>Quantidade Estoque</th>
+          <th>Status</th>
+          <th>Imagem</th>
       </tr>
     </thead>
 
     <tbody>
-      <tr th:each="products : ${products}" >
-        <th th:text="${products.id ?: '-'}"></th>
-        <th th:text="${products.productName ?: '-'}"></th>
-        <th th:text="${products.brand ?: '-'}"></th>
-        <th th:text="${products.description ?: '-'}"></th>
-        <th th:text="${products.rating ?: '-'}"></th>
-        <th th:text="${products.price ?: '-'}"></th>
-        <th th:text="${products.quantity ?: '-'}"></th>
+      <tr th:each="product : ${products}" >
+        <th th:text="${product.id ?: '-'}"></th>
+        <th th:text="${product.productName ?: '-'}"></th>
+        <th th:text="${product.brand ?: '-'}"></th>
+        <th th:text="${product.description ?: '-'}"></th>
+        <th th:text="${product.rating ?: '-'}"></th>
+        <th th:text="${product.price ?: '-'}"></th>
+        <th th:text="${product.quantity ?: '-'}"></th>
+          <th>
+          <form th:action="@{'/product/toggle-status/' +  ${product.id}}" method="post" style="display:inline">
+              <button type="submit"
+                      th:classappend="${product.status?.name() == 'ATIVO'} ? 'btn btn-warning' : 'btn btn-success'">
+                 <span th:text="${product.status?.name() == 'ATIVO'} ? 'Desativar' : 'Ativar'"></span>
+              </button>
+          </form>
+          </th>
+          <td>
+              <img th:if="${product.images.size() > 0}"
+                   th:src="@{'/uploads/products/' + ${product.id} + '/' + ${product.images[0].filename}}"
+                   alt="Imagem do Produto" style="width: 80px; height: auto;">
+              <span th:if="${product.images.size() == 0}">-</span>
+          </td>
       </tr>
     </tbody>
   </table>

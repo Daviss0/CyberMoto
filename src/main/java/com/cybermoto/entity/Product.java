@@ -1,5 +1,6 @@
 package com.cybermoto.entity;
 
+import com.cybermoto.enums.StatusProduct;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -55,8 +56,16 @@ public class Product {
     @OneToMany (mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ImageProduct> images = new ArrayList<>();
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "STATUS", nullable = false)
+    private StatusProduct status;
+
 
     // getters e setters
+    public void setStatus(StatusProduct status) {this.status = status;}
+
+    public StatusProduct getStatus() {return status;}
+
     public void setImages(List<ImageProduct> images) {this.images = images;}
 
     public List<ImageProduct> getImages() {return images;}
