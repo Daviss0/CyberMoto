@@ -21,7 +21,7 @@ public class ImageProductServiceImpl implements ImageProductService{
     private ImageProductRepository imageProductRepository;
 
     @Override
-    public void saveProductImage(Product product, MultipartFile image) {
+    public void saveProductImage(Product product, MultipartFile image, boolean isMain) {
 
         // 1) Validação do tipo
         String contentType = image.getContentType();
@@ -34,8 +34,18 @@ public class ImageProductServiceImpl implements ImageProductService{
         if (image.getSize() > 5 * 1024 * 1024) {
             throw new IllegalArgumentException("Imagem muito grande! Tamanho máximo 5MB");
         }
+        //3 salvamento da imagem principal
+        if(isMain) {
+            product.getImages().forEach(img -> {
+                if(img.isMain()) {
+                    img.setMain(false);
+                    imageProductRepository.save(img);
+                }
+            });
+        }
 
-        // 3) Salvamento físico + banco
+
+        // 4) Salvamento físico + banco
         String fileName = UUID.randomUUID() + "-" + image.getOriginalFilename();
         Path diretorio = Paths.get("uploads/products/" + product.getId() + "/");
         Path path = diretorio.resolve(fileName);
@@ -47,11 +57,33 @@ public class ImageProductServiceImpl implements ImageProductService{
             ImageProduct img = new ImageProduct();
             img.setFilename(fileName);
             img.setProduct(product);
+            img.setMain(isMain);
             imageProductRepository.save(img);
+
 
         } catch (IOException e) {
             throw new RuntimeException("Erro ao salvar a imagem", e);
         }
     }
 
+
+
+    @Override
+    public void deleteImageById(Long id) {
+        ImageProduct img = imageProductRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Imagem não encontrada"));
+
+        Path path = Paths.get("uploads/products/" + img.getProduct().getId() + "/" + img.getFilename());
+        try {
+            Files.deleteIfExists(path);
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao excluir imagem", e);
+        }
+
+        imageProductRepository.delete(img);
+    }
+
+
+
 }
+

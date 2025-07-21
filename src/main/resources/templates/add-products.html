@@ -85,6 +85,14 @@
       <input type="file" class="form-control" name="uploadImages" id="images" multiple accept="image/*">
     </div>
 
+    <div class="form-check-mt-2">
+      <input class="form-check-input" type="checkbox" name="isMain" id="isMain" value="true">
+      <label class="form-check-label" for="isMain">Definir como imagem principal</label>
+
+
+    </div>
+
+    <input type="hidden" name="mainImageIndex" id="mainImageIndex" value="-1">
     <div id="preview" class="mb-3"></div>
 
     <button type="submit" class="btn btn-primary w-50">Salvar</button>
@@ -94,18 +102,36 @@
 </div>
 
 <script>
-  document.getElementById('images').addEventListener('change', function(event) {
-    const preview = document.getElementById('preview');
-    preview.innerHTML = '';
+  
+  const imagesInput = document.getElementById('images');
+  const preview = document.getElementById('preview');
+  const mainImageIndexInput = document.getElementById('mainImageIndex');
 
-    Array.from(event.target.files).forEach(file => {
-      if(file.type.startsWith('image/')) {
+  imagesInput.addEventListener('change', function(event) {
+    preview.innerHTML = '';
+    mainImageIndexInput.value = -1; // Reset seleção
+    const files = Array.from(event.target.files);
+
+    files.forEach((file, index) => {
+      if (file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = function(e) {
           const img = document.createElement('img');
           img.src = e.target.result;
-          img.style.maxWidth = ' 150px';
+          img.style.maxWidth = '100px';
           img.style.margin = '5px';
+          img.style.cursor = 'pointer';
+          img.style.border = '2px solid transparent';
+
+          img.addEventListener('click', function() {
+            // Remover borda de todas
+            preview.querySelectorAll('img').forEach(i => i.style.border = '2px solid transparent');
+            // Destacar clicada
+            img.style.border = '2px solid red';
+            // Guardar índice
+            mainImageIndexInput.value = index;
+          });
+
           preview.appendChild(img);
         };
         reader.readAsDataURL(file);

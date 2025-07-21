@@ -6,5 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ImageProductService {
 
-    void saveProductImage(Product product, MultipartFile image) throws IllegalArgumentException;
+    void saveProductImage(Product product, MultipartFile image, boolean isMain) throws IllegalArgumentException;
+    void deleteImageById(Long id);
 }

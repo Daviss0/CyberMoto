@@ -1,5 +1,6 @@
 package com.cybermoto.controller;
 
+import com.cybermoto.entity.ImageProduct;
 import com.cybermoto.entity.User;
 import com.cybermoto.repository.UserRepository;
 import com.cybermoto.service.ImageProductService;
@@ -65,13 +66,18 @@ public class ProductController {
     @PostMapping("/product-added")
     public String addProduct(@ModelAttribute ("productForm") Product product,
                              @RequestParam(value = "uploadImages", required = false) MultipartFile[] images,
+                             @RequestParam(value = "isMainImage", required= false) boolean isMain,
                              RedirectAttributes redirectAttributes) {
         try {
             productService.saveProduct(product);
 
-            for (MultipartFile image : images) {
-                if (!image.isEmpty()) {
-                    imageProductService.saveProductImage(product, image);
+            if (images != null) {
+                for (MultipartFile image : images) {
+                    if (!image.isEmpty()) {
+                        imageProductService.saveProductImage(product, image, isMain);
+                        // Se marcou uma como principal, só a primeira será principal
+                        isMain = false;
+                    }
                 }
             }
             return "redirect:/product/manage-products";
@@ -88,4 +94,39 @@ public class ProductController {
         return "redirect:/product/manage-products";
     }
 
+    @GetMapping("edit-product/{id}")
+    public String editProducts(@PathVariable Long id, Model model) {
+        Product product = productRepository.findById(id).orElse(null);
+        model.addAttribute("productData", product);
+        return "edit-product";
+    }
+
+    @PostMapping("/delete-image/{id}")
+    public String deleteImage(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+       imageProductService.deleteImageById(id);
+       redirectAttributes.addFlashAttribute("msg", "imagem removida com sucesso!");
+       return "redirect:/product/edit-product";
+    }
+
+    @PostMapping("update-product")
+    public String updateProduct(@ModelAttribute("productData") Product product,
+                                @RequestParam (value = "uploadImages", required = false) MultipartFile[] uploadImages,
+                                RedirectAttributes redirectAttributes)  {
+    try {
+      productService.updateProduct(product);
+      if(uploadImages != null) {
+          for(MultipartFile image : uploadImages) {
+            if(!image.isEmpty()) {
+                imageProductService.saveProductImage(product, image, false);
+            }
+          }
+      }
+      redirectAttributes.addFlashAttribute("msg", "produto atualizado com sucesso!");
+      return "redirect:/product/manage-products";
+    }
+    catch(Exception e) {
+      redirectAttributes.addFlashAttribute("erro", "erro ao atualizar produto"+  e.getMessage());
+      return "redirect:/prodcuct/edit-product" + product.getId();
+    }
+    }
 }

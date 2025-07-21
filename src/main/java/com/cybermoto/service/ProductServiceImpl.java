@@ -67,4 +67,20 @@ public class ProductServiceImpl implements ProductService{
           productRepository.save(product);
     }
 
+    @Override
+    public void updateProduct(Product productData) {
+        Product existingProduct = productRepository.findById(productData.getId())
+                .orElseThrow(() -> new IllegalArgumentException ("produto não encontrado"));
+
+        //atualiza os campos
+        existingProduct.setProductName(productData.getProductName());
+        existingProduct.setBrand(productData.getBrand());
+        existingProduct.setDescription(productData.getDescription());
+        existingProduct.setPrice(productData.getPrice());
+        existingProduct.setQuantity(productData.getQuantity());
+        existingProduct.setStatus(productData.getStatus());
+
+        productRepository.save(existingProduct);
+    }
+
 }

@@ -23,8 +23,15 @@ public class ImageProduct {
     @Column (name = "DATECREATED", nullable = false)
     private LocalDateTime dateCreated = LocalDateTime.now();
 
+    @Column(name = "ISMAIN", nullable = false)
+    private boolean isMain = false;
+
 
     //getters e setters
+    public boolean isMain() {return isMain;}
+
+    public void setMain(boolean main) {isMain = main;}
+
     public void setDateCreated(LocalDateTime dateCreated) {this.dateCreated = dateCreated;}
 
     public LocalDateTime getDateCreated() {return dateCreated;}

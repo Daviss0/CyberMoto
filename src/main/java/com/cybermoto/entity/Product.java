@@ -56,9 +56,18 @@ public class Product {
     @OneToMany (mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ImageProduct> images = new ArrayList<>();
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "STATUS", nullable = false)
-    private StatusProduct status;
+    private StatusProduct status = StatusProduct.ATIVO;
+
+    @Transient
+    public ImageProduct getMainImage() {
+      return images.stream()
+              .filter(ImageProduct::isMain)
+              .findFirst()
+              .orElse(null);
+    }
 
 
     // getters e setters

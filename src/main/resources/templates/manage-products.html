@@ -56,12 +56,12 @@
        <th>ID</th>
         <th>Nome do Produto</th>
         <th>Marca</th>
-        <th>Descrição</th>
         <th>Avaliação</th>
         <th>Valor</th>
         <th>Quantidade Estoque</th>
           <th>Status</th>
           <th>Imagem</th>
+          <th>Editar</th>
       </tr>
     </thead>
 
@@ -70,7 +70,6 @@
         <th th:text="${product.id ?: '-'}"></th>
         <th th:text="${product.productName ?: '-'}"></th>
         <th th:text="${product.brand ?: '-'}"></th>
-        <th th:text="${product.description ?: '-'}"></th>
         <th th:text="${product.rating ?: '-'}"></th>
         <th th:text="${product.price ?: '-'}"></th>
         <th th:text="${product.quantity ?: '-'}"></th>
@@ -83,11 +82,57 @@
           </form>
           </th>
           <td>
-              <img th:if="${product.images.size() > 0}"
-                   th:src="@{'/uploads/products/' + ${product.id} + '/' + ${product.images[0].filename}}"
-                   alt="Imagem do Produto" style="width: 80px; height: auto;">
+              <div th:if="${product.images.size() > 0}">
+                  <button type="button" class="btn btn-primary btn-sm"
+                          th:attr="data-bs-toggle='modal', data-bs-target='#modalImages' + ${product.id}">
+                      Ver Imagens
+                  </button>
+
+                  <!-- Modal -->
+                  <div class="modal fade" th:id="'modalImages' + ${product.id}" tabindex="-1">
+                      <div class="modal-dialog modal-dialog-centered modal-lg">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" th:text="'Imagens do Produto: ' + ${product.productName}"></h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                              </div>
+                              <div class="modal-body">
+                                  <div class="carousel slide" th:id="'carouselImages' + ${product.id}" data-bs-ride="carousel">
+                                      <div class="carousel-inner">
+                                          <div th:each="img, iterStat : ${product.images}"
+                                               class="carousel-item"
+                                               th:classappend="${iterStat.index == 0} ? ' active'">
+                                              <img th:src="@{'/uploads/products/' + ${product.id} + '/' + ${img.filename}}"
+                                                   class="d-block mx-auto w-50"
+                                                   alt="Imagem do Produto">
+                                          </div>
+                                      </div>
+
+                                      <button class="carousel-control-prev" type="button"
+                                              th:attr="data-bs-target='#carouselImages' + ${product.id}" data-bs-slide="prev">
+                                          <span class="carousel-control-prev-icon"></span>
+                                      </button>
+
+                                      <button class="carousel-control-next" type="button"
+                                              th:attr="data-bs-target='#carouselImages' + ${product.id}" data-bs-slide="next">
+                                          <span class="carousel-control-next-icon"></span>
+                                      </button>
+
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+              </div>
               <span th:if="${product.images.size() == 0}">-</span>
           </td>
+
+
+          <td>
+              <a class="btn btn-success" th:href="@{'/product/edit-product/' + ${product.id}}">Editar</a>
+          </td>
+
       </tr>
     </tbody>
   </table>

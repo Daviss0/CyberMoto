@@ -6,4 +6,6 @@ public interface ProductService {
 
     void saveProduct(Product product) throws IllegalArgumentException;
     void toggleProductStatus(Long productId);
+    void updateProduct (Product productData);
+
 }
