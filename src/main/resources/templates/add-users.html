@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>adicionar usuarios</title>
@@ -8,30 +8,31 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">CyberMoto</a>
+        <a class="navbar-brand d-flex align-items-center" href="/home">
+            <img th:src="@{/cybermoto-logo.png}" alt="logo-cybermoto" width="60" height="60" class="me-2" style="margin-left: 40px" >
+        </a>
 
-        <div class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse container d-flex justify-content-center" style="margin-left: 40px">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item">
+                <li class="nav-item" style="margin-right: 10px">
                     <a class="nav-link" th:href="@{/home}">Início</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{manage-users}">Administrar Usuários</a>
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')" style="margin-right: 10px">
+                    <a class="nav-link" th:href="@{/admin/manage-users}">Administrar Usuários</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'ESTOQUISTA')" style="margin-right: 10px">
                     <a class="nav-link" th:href="@{/product/manage-products}">Administrar Produtos</a>
                 </li>
             </ul>
-
-            <span th:if="${userLogado.name != null}" th:text="'Bem-vindo' + ${userLogado.name} ">Usuário</span>
+            <span th:text="'Bem-vindo ' + ${userLogado.name}">Usuário</span>
         </div>
     </div>
 </nav>
 
 <div class="container d-flex justify-content-center align-items-center"
-     style="min-height: 80vh; border-top: 30px solid #ffffff; border-bottom: 30px solid #ffffff">
+     style="min-height: 80vh; border-top: 30px solid #ffffff; border-bottom: 30px solid #ffffff; margin-top: 60px">"
   <form class="w-50 border p-4 rounded shadow" th:action="@{/admin/user-added}" th:object="${user}" method="post">
     <h1>Adicionar Usuário</h1>
      <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
@@ -70,7 +71,10 @@
           </select>
       </div>
 
-   <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
+      <div class=" container d-flex">
+   <button type="submit" class="btn btn-success w-50" style="margin: 15px">Cadastrar</button>
+      <a class="btn btn-secondary w-50" href="/admin/manage-users" style="margin: 15px">Voltar</a>
+      </div>
   </form>
 </div>
 

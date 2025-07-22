@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:href="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Editar produto</title>
@@ -9,28 +9,30 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">CyberMoto</a>
+    <a class="navbar-brand d-flex align-items-center" href="/home">
+      <img th:src="@{/cybermoto-logo.png}" alt="logo-cybermoto" width="60" height="60" class="me-2" style="margin-left: 40px" >
+    </a>
 
-    <div class="collapse navbar-collapse">
+    <div class="collapse navbar-collapse container d-flex justify-content-center" style="margin-left: 40px">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item">
+        <li class="nav-item" style="margin-right: 10px">
           <a class="nav-link" th:href="@{/home}">Início</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" th:href="@{manage-users}">Administrar Usuários</a>
+        <li class="nav-item" sec:authorize="hasRole('ADMIN')" style="margin-right: 10px">
+          <a class="nav-link" th:href="@{/admin/manage-users}">Administrar Usuários</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" sec:authorize="hasAnyRole('ADMIN', 'ESTOQUISTA')" style="margin-right: 10px">
           <a class="nav-link" th:href="@{/product/manage-products}">Administrar Produtos</a>
         </li>
       </ul>
-      <span th:text="'Bem-vindo ' + ${productData.productName}">Usuário</span>
+      <span th:text="'Bem-vindo ' + ${userData.name}">Usuário</span>
     </div>
   </div>
 </nav>
 
-<div class="container d-flex justify-content-center align-items-center">
+<div class="container d-flex justify-content-center align-items-center" style="margin-top: 80px; margin-bottom: 40px">
   <form class="w-50 border p-4 rounded shadow" th:action="@{/product/update-product}" method="post" enctype="multipart/form-data" th:object="${productData}">
 
     <h2 class="text-center mb-4">Editar Produto</h2>
@@ -86,10 +88,11 @@
     </div>
 
 
-    <div class="mb-3">
-    <button type="submit" class="btn btn-primary mt-3">Salvar Alterações</button>
-    </div>
       <div id="previewNewImages" class="d-flex flex-wrap"></div>
+    <div class="mb-3 container d-flex justify-content-center">
+    <button type="submit" class="btn btn-success mt-3" style="margin: 15px">Salvar Alterações</button>
+      <a class="btn btn-secondary mt-3" href="/product/manage-products" style="margin: 15px">Voltar</a>
+    </div>
 </div>
   </form>
 </div>

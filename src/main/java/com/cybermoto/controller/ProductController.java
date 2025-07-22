@@ -95,9 +95,16 @@ public class ProductController {
     }
 
     @GetMapping("edit-product/{id}")
-    public String editProducts(@PathVariable Long id, Model model) {
-        Product product = productRepository.findById(id).orElse(null);
+    public String editProducts(@PathVariable Long id, Model model, Principal principal) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException ("Produto não encontrado"));
+
+        String username = principal.getName();
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+
         model.addAttribute("productData", product);
+        model.addAttribute("userData", user);
         return "edit-product";
     }
 
