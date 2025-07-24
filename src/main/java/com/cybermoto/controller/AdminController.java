@@ -3,17 +3,14 @@ package com.cybermoto.controller;
 import com.cybermoto.entity.User;
 import com.cybermoto.repository.UserRepository;
 import com.cybermoto.service.UserService;
-import com.sun.tools.javac.Main;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.thymeleaf.model.IModel;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Optional;
-
 
 @RequestMapping("/admin")
 @Controller
@@ -74,7 +71,7 @@ public class AdminController {
     }
 
     @PostMapping("/user-added")
-    public String addUser (@ModelAttribute ("user") User user, Model model) {
+    public String addUser (@Valid @ModelAttribute ("user") User user, Model model) {
         try {
             userService.saveUser(user);
             return "redirect:/admin/manage-users"; // redireciona para o metodo manageUsers que carrega a lista de usuarios

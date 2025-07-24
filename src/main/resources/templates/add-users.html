@@ -32,7 +32,7 @@
 </nav>
 
 <div class="container d-flex justify-content-center align-items-center"
-     style="min-height: 80vh; border-top: 30px solid #ffffff; border-bottom: 30px solid #ffffff; margin-top: 60px">"
+     style="min-height: 80vh; border-top: 30px solid #ffffff; border-bottom: 30px solid #ffffff; margin-top: 60px">
   <form class="w-50 border p-4 rounded shadow" th:action="@{/admin/user-added}" th:object="${user}" method="post">
     <h1>Adicionar Usuário</h1>
      <div th:if="${erro}" class="alert alert-danger" th:text="${erro}"></div>
