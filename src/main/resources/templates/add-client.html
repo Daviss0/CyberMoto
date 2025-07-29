@@ -59,6 +59,54 @@
                 <option value="FEMALE">Feminino</option>
             </select>
         </div>
+
+        <hr class="my-4">
+        <h4 class="text-center mb-4">Endereço</h4>
+
+        <div class="col-md-4">
+            <label for="cep" class="form-label">CEP:</label>
+            <input type="text" class="form-control" id="cep" th:field="*{adress.cep}" maxlength="9"
+                   oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/(\d{5})(\d)/, '$1-$2');" required>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <label for="street" class="form-label">Rua:</label>
+                <input type="text" class="form-control" id="street" th:field="*{adress.street}">
+            </div>
+            <div class="col-md-4">
+                <label for="complement" class="form-label">Complemento:</label>
+                <input type="text" class="form-control" id="complement" th:field="*{adress.complement}">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="number" class="form-label">Número:</label>
+                <input type="number" class="form-control" id="number" th:field="*{adress.number}">
+            </div>
+            <div class="col-md-8">
+                <label for="neighborhood" class="form-label">Bairro:</label>
+                <input type="text" class="form-control" id="neighborhood" th:field="*{adress.neighborhood}">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-8">
+                <label for="city" class="form-label">Cidade:</label>
+                <input type="text" class="form-control" id="city" th:field="*{adress.city}">
+            </div>
+            <div class="col-md-4">
+                <label for="uf" class="form-label">UF:</label>
+                <select class="form-select" id="uf" th:field="*{adress.uf}">
+                    <option value="">Selecione</option>
+                    <option th:each="uf : ${T(com.cybermoto.enums.UF).values()}"
+                            th:value="${uf}" th:text="${uf}">
+                    </option>
+                </select>
+            </div>
+        </div>
+
         <div class="container d-flex justify-content-center">
           <button type="submit" class="btn btn-success">Enviar</button>
         </div>
@@ -73,6 +121,33 @@
             .replace(/(\d{3})(\d)/, '$1.$2')
             .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
     }
+
+    document.getElementById("cep").addEventListener("blur", function () {
+        let cep = this.value.replace(/\D/g, "");
+
+        if (cep.length !== 8) {
+            alert("CEP inválido. Deve conter 8 dígitos.");
+            return;
+        }
+
+        fetch(`https://viacep.com.br/ws/${cep}/json/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.erro) {
+                    alert("CEP não encontrado.");
+                    return;
+                }
+
+                document.getElementById("street").value = data.logradouro || '';
+                document.getElementById("neighborhood").value = data.bairro || '';
+                document.getElementById("city").value = data.localidade || '';
+                document.getElementById("uf").value = data.uf || '';
+            })
+            .catch(error => {
+                console.error("Erro ao buscar CEP: ", error);
+                alert("Erro ao buscar CEP.");
+            });
+    });
 </script>
 
 </body>

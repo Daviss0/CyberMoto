@@ -50,6 +50,10 @@ public class Client {
    @Column(name = "GENDER", nullable = false)
    private Gender gender;
 
+   @OneToOne(cascade = CascadeType.ALL)
+   @JoinColumn(name = "ENDERECO_ID", referencedColumnName = "id")
+   private Adress adress;
+
    // getters & setters
     public void setId(Long id) {this.id = id;}
 
@@ -82,6 +86,10 @@ public class Client {
     public Gender getGender() {return gender;}
 
     public void setGender(Gender gender) {this.gender = gender;}
+
+    public Adress getAdress() {return adress;}
+
+    public void setAdress(Adress adress) {this.adress = adress;}
 
 
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/client")
@@ -51,11 +52,23 @@ public class ClientController {
       }
         try {
           clientService.addClient(client);
-          return "redirect:/add-client";
+          return "redirect:/client/login-client";
         }
         catch(IllegalArgumentException e) {
           model.addAttribute("error", e.getMessage());
           return "add-client";
         }
+    }
+
+
+    @GetMapping("/mainPage")
+    public String mainPage(Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/client/login-client";
+        }
+        Client client = clientRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        model.addAttribute("clientName", client.getName());
+        return "mainPage";
     }
 }

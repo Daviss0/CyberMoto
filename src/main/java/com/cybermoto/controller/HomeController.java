@@ -17,8 +17,16 @@ public class HomeController {
 
     @GetMapping("/home")
     public String home(Model model, Principal principal) {
-      User user = userRepository.findByEmail(principal.getName()).orElse(null);
-      model.addAttribute("userLogado", user);
-      return "home";
+        if (principal == null) {
+            return "redirect:/admin/login";
+        }
+
+        userRepository.findByEmail(principal.getName()).ifPresent(user -> {
+            model.addAttribute("userLogado", user);
+        });
+
+        return "home";
     }
+
+
 }

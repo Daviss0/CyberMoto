@@ -11,21 +11,30 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Collection;
 
-@Component
-public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                       Authentication authentication)throws IOException, ServletException {
-      Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+    @Component
+    public class CustomAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-      for(GrantedAuthority authority : authorities) {
-          String role = authority.getAuthority();
-          if(role.equals("ROLE_ADMIN") || role.equals("ROLE_ESTOQUISTA")) {
-              response.sendRedirect("/home");
-              return;
-          }
-      }
-          response.sendRedirect("/login?error");
+        @Override
+        public void onAuthenticationSuccess(HttpServletRequest request,
+                                            HttpServletResponse response,
+                                            Authentication authentication) throws IOException, ServletException {
+
+            authentication.getAuthorities().forEach(role -> {
+                System.out.println(">>> Role detectada: " + role.getAuthority());
+            });
+
+            for (var authority : authentication.getAuthorities()) {
+                String role = authority.getAuthority();
+
+                if (role.equals("ROLE_ADMIN") || role.equals("ROLE_ESTOQUISTA")) {
+                    response.sendRedirect("/home");
+                    return;
+                }
+            }
+            response.sendRedirect("/access-denied");
+        }
     }
-}
+
+
+
