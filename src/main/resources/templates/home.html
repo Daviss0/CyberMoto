@@ -30,7 +30,7 @@
   <div class="d-flex justify-content-center" sec:authorize="hasAnyRole('ADMIN', 'ESTOQUISTA')">
     <a class="btn btn-success" th:href="@{/product/manage-products}">Gerenciar Produtos</a>
   </div>
-  <form th:action="@{logout}" method="post" class="d-flex justify-content-center">
+  <form th:action="@{/admin/logout}" method="post" class="d-flex justify-content-center">
     <button class="btn btn-secondary" type="submit">Sair</button>
   </form>
 </div>

@@ -23,22 +23,27 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println(">>> Buscando usuário com e-mail: " + username);
+        System.out.println("Entrou no UserDetailsServiceImpl com: " + username);
 
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> {
-                    System.out.println(">>> Usuário não encontrado: " + username);
+                    System.out.println("Usuário não encontrado: " + username);
                     return new UsernameNotFoundException("Usuário não encontrado");
                 });
 
-        System.out.println(">>> Usuário encontrado: " + user.getEmail() + " | Tipo: " + user.getType());
+        System.out.println(" Usuário encontrado: " + user.getEmail() + " | Tipo: " + user.getType());
 
-        return org.springframework.security.core.userdetails.User
+        UserDetails userDetails = org.springframework.security.core.userdetails.User
                 .withUsername(user.getEmail())
                 .password(user.getPassword())
-                .roles(user.getType().name())
+                .roles(user.getType().name()) // Garante que o prefixo "ROLE_" será adicionado
                 .build();
+
+        System.out.println(" Authorities atribuídas: " + userDetails.getAuthorities());
+
+        return userDetails;
     }
+
 
 
 

@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -37,6 +38,9 @@ public class ProductController {
 
     @GetMapping("/manage-products")
     public String showManageProducts(Model model, Principal principal) {
+        if(principal == null) {
+            return "redirect:/admin/login";
+        }
         List<Product> products = productRepository.findAllWithImages();
         model.addAttribute("products", products);
 
@@ -64,29 +68,42 @@ public class ProductController {
     }
 
     @PostMapping("/product-added")
-    public String addProduct(@ModelAttribute ("productForm") Product product,
+    public String addProduct(@ModelAttribute("productForm") Product product,
                              @RequestParam(value = "uploadImages", required = false) MultipartFile[] images,
-                             @RequestParam(value = "isMainImage", required= false) boolean isMain,
-                             RedirectAttributes redirectAttributes) {
+                             @RequestParam(value = "isMain", required = false) Boolean isMain,
+                             RedirectAttributes ra) {
         try {
+            boolean hasAnyFile = images != null && Arrays.stream(images).anyMatch(f -> f != null && !f.isEmpty());
+            if (!hasAnyFile) {
+                ra.addFlashAttribute("productForm", product);
+                ra.addFlashAttribute("erro", "Envie pelo menos uma imagem.");
+                return "redirect:/product/add-products";
+            }
+
+            if (isMain == null || !isMain) {
+                ra.addFlashAttribute("productForm", product);
+                ra.addFlashAttribute("erro", "Selecione uma imagem principal.");
+                return "redirect:/product/add-products";
+            }
+
             productService.saveProduct(product);
 
-            if (images != null) {
-                for (MultipartFile image : images) {
-                    if (!image.isEmpty()) {
-                        imageProductService.saveProductImage(product, image, isMain);
-                        // Se marcou uma como principal, só a primeira será principal
-                        isMain = false;
-                    }
+            boolean mainUsed = false;
+            for (MultipartFile file : images) {
+                if (file != null && !file.isEmpty()) {
+                    imageProductService.saveProductImage(product, file, !mainUsed); // true só na primeira
+                    mainUsed = true;
                 }
             }
+
             return "redirect:/product/manage-products";
         } catch (Exception e) {
-           redirectAttributes.addFlashAttribute("productForm", product);
-           redirectAttributes.addFlashAttribute("erro", e.getMessage());
-           return "redirect:/product/add-products";
+            ra.addFlashAttribute("productForm", product);
+            ra.addFlashAttribute("erro", e.getMessage());
+            return "redirect:/product/add-products";
         }
     }
+
 
     @PostMapping("/toggle-status/{id}")
     public String toggleProductStatus(@PathVariable Long id) {
@@ -96,6 +113,10 @@ public class ProductController {
 
     @GetMapping("edit-product/{id}")
     public String editProducts(@PathVariable Long id, Model model, Principal principal) {
+        if(principal == null) {
+            return "redirect:/admin/login";
+        }
+
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException ("Produto não encontrado"));
 
@@ -136,4 +157,6 @@ public class ProductController {
       return "redirect:/prodcuct/edit-product" + product.getId();
     }
     }
+
+
 }

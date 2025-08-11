@@ -32,6 +32,7 @@ import java.util.Collection;
                     return;
                 }
             }
+
             response.sendRedirect("/access-denied");
         }
     }

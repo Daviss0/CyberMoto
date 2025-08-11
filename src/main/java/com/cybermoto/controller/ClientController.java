@@ -1,5 +1,7 @@
 package com.cybermoto.controller;
 
+import com.cybermoto.entity.Product;
+import com.cybermoto.repository.ProductRepository;
 import com.cybermoto.service.ClientService;
 import jakarta.validation.Valid;
 import org.springframework.ui.Model;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -25,6 +28,9 @@ public class ClientController {
 
     @Autowired
     ClientService clientService;
+
+    @Autowired
+    ProductRepository productRepository;
 
     @GetMapping("login-client")
     public String loginClient(Model model)throws Exception {
@@ -68,7 +74,11 @@ public class ClientController {
         }
         Client client = clientRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        List<Product> product = productRepository.findAll();
+
         model.addAttribute("clientName", client.getName());
+        model.addAttribute("products", product);
         return "mainPage";
     }
 }

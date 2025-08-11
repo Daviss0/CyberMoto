@@ -33,15 +33,25 @@ public class SecurityConfig {
                     String path = request.getRequestURI();
                     return path.startsWith("/admin/") ||
                             path.startsWith("/estoquista/") ||
+                            path.startsWith("/product/edit-product/") ||
                             path.equals("/admin/login") ||
-                            path.equals("/home");
+                            path.equals("/home") ||
+                            path.equals("/product/manage-products") ||
+                            path.equals("/product/add-products") ||
+                            path.equals("/product/edit-product");
+
+
                 })
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/login", "/h2-console/**", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/product/manage-products").hasAnyRole("ADMIN", "ESTOQUISTA")
+                        .requestMatchers("/product/add-products").hasAnyRole("ADMIN", "ESTOQUISTA")
+                        .requestMatchers("/product/edit-product/**").hasAnyRole("ADMIN", "ESTOQUISTA")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/estoquista/**").hasRole("ESTOQUISTA")
                         .requestMatchers("/home").hasAnyRole("ADMIN", "ESTOQUISTA")
+                        .requestMatchers("/product/edit-product/**").hasAnyRole("ADMIN", "ESTOQUISTA")
                         .anyRequest().authenticated()
                 )
                 .formLogin(login -> login
@@ -52,9 +62,18 @@ public class SecurityConfig {
                         .successHandler(successHandler)
                         .permitAll()
                 )
+                .logout(logout -> logout
+                        .logoutUrl("/admin/logout")
+                        .logoutSuccessUrl("/admin/login?logout")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                )
                 .authenticationManager(authenticationManager(http))
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> headers.frameOptions(frame -> frame.disable()));
+
 
         return http.build();
     }
@@ -70,7 +89,9 @@ public class SecurityConfig {
                                 "/client/add-client",
                                 "/client/client-added",
                                 "/client/login-client",
-                                "/css/**", "/js/**", "/images/**"
+                                "/uploads/products/**",
+                                "/css/**", "/js/**", "/images/**",
+                                "/cybermoto-logo.png"
                         ).permitAll()
                         .anyRequest().hasRole("CLIENT")
                 )
@@ -82,11 +103,19 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/client/mainPage", true)
                         .permitAll()
                 )
-                .userDetailsService(clientDetailsService)
-                .logout(logout -> logout.logoutUrl("/client/logout"));
+                .logout(logout -> logout
+                        .logoutUrl("/client/logout")
+                        .logoutSuccessUrl("/client/login-client?logout")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll()
+                )
+                .userDetailsService(clientDetailsService);
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
