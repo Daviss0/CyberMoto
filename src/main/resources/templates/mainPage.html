@@ -16,12 +16,67 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container-fluid">
+        <!-- Logo -->
         <a class="navbar-brand d-flex align-items-center" href="#">
             <img th:src="@{/cybermoto-logo.png}" alt="logo-cybermoto" width="60" height="60" class="me-2" style="margin-left: 40px">
         </a>
-        <span th:text="'Bem-vindo ' + ${clientName}">Usuário</span>
+
+        <!-- Toggle para mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu"
+                aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Itens da navbar -->
+        <div class="collapse navbar-collapse justify-content-end" id="navbarMenu">
+            <ul class="navbar-nav mb-2 mb-lg-0">
+
+                <!-- Quando logado -->
+                <li class="nav-item dropdown" th:if="${client != null}">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i>
+                        <span th:text="${client.name}">Usuário</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/client/account}">
+                                <i class="bi bi-person-lines-fill"></i> Minha Conta
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/meus-pedidos}">
+                                <i class="bi bi-card-list"></i> Meus Pedidos
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/client/mainPage}">
+                                <i class="bi bi-house"></i> Home
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/client/logout}" method="post" style="display: inline;">
+                                <button type="submit" class="dropdown-item" style="border: none; background: none;">
+                                    <i class="bi bi-box-arrow-right"></i> Sair
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Quando NÃO logado -->
+                <li class="nav-item" th:if="${client == null}">
+                    <a class="nav-link btn btn-primary px-3" th:href="@{/client/login-client}">
+                        <i class="bi bi-box-arrow-in-right"></i> Entrar / Cadastrar
+                    </a>
+                </li>
+
+            </ul>
+        </div>
     </div>
 </nav>
+
 
 <div class="container mt-5 pt-5">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">

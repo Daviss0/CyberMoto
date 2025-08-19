@@ -1,6 +1,9 @@
 package com.cybermoto.controller;
 
+import com.cybermoto.entity.Address;
 import com.cybermoto.entity.Product;
+import com.cybermoto.enums.UF;
+import com.cybermoto.repository.AddressRepository;
 import com.cybermoto.repository.ProductRepository;
 import com.cybermoto.service.ClientService;
 import jakarta.validation.Valid;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
@@ -31,6 +35,9 @@ public class ClientController {
 
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    AddressRepository addressRepository;
 
     @GetMapping("login-client")
     public String loginClient(Model model)throws Exception {
@@ -66,19 +73,69 @@ public class ClientController {
         }
     }
 
+    @GetMapping("/")
+    public String redirectToMainPage() {
+        return "redirect:/client/mainPage";
+    }
 
     @GetMapping("/mainPage")
     public String mainPage(Model model, Principal principal) {
-        if (principal == null) {
-            return "redirect:/client/login-client";
+      List <Product> products = productRepository.findAll();
+      model.addAttribute("products", products);
+
+      if(principal != null) {
+          Client client = clientRepository.findByEmail(principal.getName())
+                  .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+          model.addAttribute("client", client);
+      }
+      return "mainPage";
+    }
+
+    @GetMapping("/account")
+    public String account (Model model, Principal principal) {
+        Client client = clientRepository.findByEmail(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        model.addAttribute("client", client);
+
+        if(!model.containsAttribute("newAddress")) {
+            model.addAttribute("newAddress", new Address());
         }
+        model.addAttribute("ufs", UF.values());
+        return "account";
+    }
+
+    @PostMapping("/account")
+    public String updateAccount (@ModelAttribute("client") Client formClient, Principal principal) {
+      Client client = clientRepository.findByEmail(principal.getName())
+              .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        client.setName(formClient.getName());
+        client.setBirth(formClient.getBirth());
+        client.setGender(formClient.getGender());
+        client.setPassword(formClient.getPassword());
+
+        clientRepository.save(client);
+        return "redirect:/client/account?success";
+    }
+
+    @PostMapping("/account/address")
+    public String addAddress (@Valid @ModelAttribute("newAddress") Address newAddress,
+                              BindingResult br,
+                              Principal principal,
+                              RedirectAttributes ra) {
         Client client = clientRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        List<Product> product = productRepository.findAll();
+        if(br.hasErrors()) {
+            ra.addFlashAttribute("org.springframework.validation.BindingResult.newAddress", br);
+            ra.addFlashAttribute("newAddress", newAddress);
+            return "redirect:/client/account#new-address";
+        }
 
-        model.addAttribute("clientName", client.getName());
-        model.addAttribute("products", product);
-        return "mainPage";
+        newAddress.setClient(client);
+        addressRepository.save(newAddress);
+
+        ra.addFlashAttribute("msgAddress", "Mensagem adicionada com sucesso!");
+        return "redirect:/client/account#new-address";
     }
 }

@@ -86,6 +86,8 @@ public class SecurityConfig {
                 .securityMatcher(request -> request.getRequestURI().startsWith("/client/"))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/",
+                                "/client/mainPage",
                                 "/client/add-client",
                                 "/client/client-added",
                                 "/client/login-client",

@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -42,7 +43,7 @@ public class Client {
    @NotBlank(message = "Confirmação de senha é obrigatória")
    private String confPassword;
 
-   @DateTimeFormat(pattern = "yyyy-mm-dd")
+   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
    @Column (name = "BIRTH", nullable = false)
    private LocalDate birth;
 
@@ -50,9 +51,9 @@ public class Client {
    @Column(name = "GENDER", nullable = false)
    private Gender gender;
 
-   @OneToOne(cascade = CascadeType.ALL)
-   @JoinColumn(name = "ENDERECO_ID", referencedColumnName = "id")
-   private Adress adress;
+
+   @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+   private List<Address> addresses;
 
    // getters & setters
     public void setId(Long id) {this.id = id;}
@@ -87,9 +88,9 @@ public class Client {
 
     public void setGender(Gender gender) {this.gender = gender;}
 
-    public Adress getAdress() {return adress;}
 
-    public void setAdress(Adress adress) {this.adress = adress;}
+    public List<Address> getAddresses() {return addresses;}
 
+    public void setAddresses(List<Address> addresses) {this.addresses = addresses;}
 
 }

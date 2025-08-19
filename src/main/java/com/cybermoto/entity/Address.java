@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table (name = "ADRESS")
-public class Adress {
+@Table(name = "ADDRESS")
+public class Address {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,7 +26,7 @@ public class Adress {
 
     @Column(name = "NUMBER", nullable = false)
     @NotNull(message = "O número é obrigatório")
-    @Min(value = 1, message = "Numero deve ser maior que zero")
+    @Min(value = 1, message = "Número deve ser maior que zero")
     private Integer number;
 
     @Column(name = "COMPLEMENT")
@@ -34,21 +35,23 @@ public class Adress {
 
     @Column(name = "NEIGHBORHOOD", nullable = false)
     @NotBlank(message = "O bairro é obrigatório")
-    @Size(max = 100, message = "O complemento deve ter no máximo 100 caracteres")
+    @Size(max = 100, message = "O bairro deve ter no máximo 100 caracteres")
     private String neighborhood;
 
     @Column(name = "CITY", nullable = false)
     @NotBlank(message = "A cidade é obrigatória")
-    @Size(max = 100, message = "A cidade de ter no máximo 100 caracteres")
+    @Size(max = 100, message = "A cidade deve ter no máximo 100 caracteres")
     private String city;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "UF", nullable = false)
     @NotNull(message = "UF é obrigatório")
-    private UF Uf;
+    private UF uf;
 
-    @OneToOne(mappedBy = "adress")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", nullable = false)
     private Client client;
+
 
     //getters e setters
     public void setId(Long id) {this.id = id;}
@@ -79,9 +82,9 @@ public class Adress {
 
     public void setCity(String city) {this.city = city;}
 
-    public UF getUf() {return Uf;}
+    public UF getUf() {return uf;}
 
-    public void setUf(UF uf) {Uf = uf;}
+    public void setUf(UF uf) {this.uf = uf;}
 
     public Client getClient() {return client;}
 
