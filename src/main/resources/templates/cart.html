@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Meu Carrinho</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container-fluid">
+        <!-- Logo -->
+        <a class="navbar-brand d-flex align-items-center" href="#">
+            <img th:src="@{/cybermoto-logo.png}" alt="logo-cybermoto" width="60" height="60" class="me-2" style="margin-left: 40px">
+        </a>
+
+        <!-- Toggle para mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu"
+                aria-controls="navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Itens da navbar -->
+        <div class="collapse navbar-collapse justify-content-end" id="navbarMenu">
+            <ul class="navbar-nav mb-2 mb-lg-0">
+
+                <!-- Quando logado -->
+                <li class="nav-item dropdown" th:if="${client != null}">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i>
+                        <span th:text="${client.name}">Usuário</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item" th:href="@{/client/account}">
+                                <i class="bi bi-person-lines-fill"></i> Minha Conta
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/meus-pedidos}">
+                                <i class="bi bi-card-list"></i> Meus Pedidos
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/client/mainPage}">
+                                <i class="bi bi-house"></i> Home
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/client/logout}" method="post" style="display: inline;">
+                                <button type="submit" class="dropdown-item" style="border: none; background: none;">
+                                    <i class="bi bi-box-arrow-right"></i> Sair
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Quando NÃO logado -->
+                <li class="nav-item" th:if="${client == null}">
+                    <a class="nav-link btn btn-primary px-3" th:href="@{/client/login-client}">
+                        <i class="bi bi-box-arrow-in-right"></i> Entrar / Cadastrar
+                    </a>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container" style="margin-top: 90px;">
+    <th>Total</th>
+    <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="it : ${cart.items}">
+        <td>
+            <div class="d-flex align-items-center gap-2">
+                <img th:if="${it.mainImageFilename!=null}"
+                     th:src="@{'/uploads/products/' + ${it.product.id} + '/' + ${it.mainImageFilename}}"
+                     width="64" height="64" class="rounded" alt="img">
+                <div>
+                    <div class="fw-semibold" th:text="${it.productNameSnapshot}"></div>
+                    <div class="text-muted small" th:text="${it.productBrandSnapshot}"></div>
+                </div>
+            </div>
+        </td>
+        <td>
+            <form th:action="@{/cart/update}" method="post" class="d-flex align-items-center gap-1">
+                <input type="hidden" name="itemId" th:value="${it.id}">
+                <input type="number" class="form-control" name="qty" min="1" th:value="${it.quantity}">
+                <button class="btn btn-outline-secondary">OK</button>
+            </form>
+        </td>
+        <td th:text="${#numbers.formatDecimal(it.unitPrice,2,'POINT',2,'COMMA')}"></td>
+        <td th:text="${#numbers.formatDecimal(it.lineTotal,2,'POINT',2,'COMMA')}"></td>
+        <td class="text-end">
+            <form th:action="@{/cart/remove}" method="post">
+                <input type="hidden" name="itemId" th:value="${it.id}">
+                <button class="btn btn-sm btn-outline-danger">Remover</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+    </table>
+</div>
+</div>
+
+
+<form class="mt-2" th:action="@{/cart/clear}" method="post">
+    <button class="btn btn-outline-danger">Esvaziar carrinho</button>
+</form>
+</div>
+
+
+<div class="col-lg-4">
+    <div class="card shadow-sm">
+        <div class="card-header">Resumo</div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between"><span>Subtotal</span><span th:text="${#numbers.formatDecimal(cart.subtotal,2,'POINT',2,'COMMA')}"></span></div>
+            <div class="d-flex justify-content-between"><span>Frete</span><span th:text="${#numbers.formatDecimal(cart.freight,2,'POINT',2,'COMMA')}"></span></div>
+            <div class="d-flex justify-content-between"><span>Desconto</span><span th:text="${#numbers.formatDecimal(cart.discount,2,'POINT',2,'COMMA')}"></span></div>
+            <hr>
+            <div class="d-flex justify-content-between fw-bold"><span>Total</span><span th:text="${#numbers.formatDecimal(cart.total,2,'POINT',2,'COMMA')}"></span></div>
+            <div class="d-grid mt-3">
+                <a href="/checkout" class="btn btn-primary">Finalizar compra</a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<footer style="background-color: #2a2a2a; padding: 20px 0; font-family: Arial, sans-serif; color: white;">
+    <table width="100%" border="0" cellspacing="0" cellpadding="15" style="max-width: 1200px; margin: 0 auto; border-collapse: collapse;">
+        <tr>
+            <td width="33%" style="vertical-align: top; border-right: 1px solid #444; padding-right: 20px;">
+                <div style="font-weight: bold; margin-bottom: 8px; font-size: 18px;">Sobre a CyberMoto</div>
+                <div style="color: #ccc; font-size: 14px; line-height: 1.5;">
+                    Sua loja de acessórios e peças de moto confiável com os melhores preços e produtos de qualidade.
+                </div>
+            </td>
+            <td width="33%" style="vertical-align: top; border-right: 1px solid #444; padding: 0 20px; text-align: center;">
+                <div style="font-weight: bold; margin-bottom: 8px; font-size: 18px;">Links Úteis</div>
+                <div style="color: #ccc; font-size: 14px; line-height: 1.8;">
+                    <div><a th:href="@{/contato}">Contato</a></div>
+                    <div><a th:href="@{/politica-privacidade}">Política de Privacidade</a></div>
+                    <div><a th:href="@{/termos-uso}">Termos de Uso</a></div>
+                </div>
+            </td>
+            <td width="33%" style="vertical-align: top; padding-left: 20px;">
+                <div style="font-weight: bold; margin-bottom: 8px; font-size: 18px;">Redes Sociais</div>
+                <div style="color: #ccc; font-size: 24px;">
+                    <a href="https://www.facebook.com/senacsaopaulo" target="_blank" style="color: #ccc; text-decoration: none; margin-right: 15px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+                    </a>
+                    <a href="https://x.com/senacsaopaulo" target="_blank" style="color: #ccc; text-decoration: none; margin-right: 15px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+                    </a>
+                    <a href="https://www.instagram.com/senacsaopaulo/" target="_blank" style="color: #ccc; text-decoration: none;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                    </a>
+                </div>
+            </td>
+        </tr>
+    </table>
+</footer>
+</body>
+</html>
